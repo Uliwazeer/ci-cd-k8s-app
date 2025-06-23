@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ci-cd-app
-        image: your-dockerhub-username/ci-cd-app:latest
+        image: aliwazeer/ci-cd-app:latest
         ports:
         - containerPort: 3000
         livenessProbe:
