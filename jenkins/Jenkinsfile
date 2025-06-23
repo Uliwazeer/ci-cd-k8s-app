@@ -1,11 +1,13 @@
 pipeline {
   agent any
+
   stages {
     stage('Clone Repo') {
       steps {
         git 'https://github.com/Uliwazeer/ci-cd-k8s-app.git'
       }
     }
+
     stage('Install Dependencies') {
       steps {
         dir('app') {
@@ -13,6 +15,7 @@ pipeline {
         }
       }
     }
+
     stage('Run Tests') {
       steps {
         dir('app') {
@@ -20,13 +23,17 @@ pipeline {
         }
       }
     }
+
     stage('Build Docker Image') {
       steps {
-        script {
-          docker.build('ci-cd-app')
+        dir('app') {
+          script {
+            docker.build('ci-cd-app', '.')
+          }
         }
       }
     }
+
     stage('Push to DockerHub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -38,6 +45,7 @@ pipeline {
         }
       }
     }
+
     stage('Deploy to Kubernetes') {
       steps {
         sh 'kubectl apply -f k8s/deployment.yaml'
